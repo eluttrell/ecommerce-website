@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request, redirect
 import bcrypt, uuid, pg, os
 
 
-db = pg.DB(dbname='ecommerce_db')
+db = pg.DB(dbname='e-commerce')
 app = Flask('ecommerceApp', static_url_path="")
 
 
