@@ -3,7 +3,7 @@ import bcrypt, uuid, pg, os
 
 
 db = pg.DB(dbname='ecommerce_db')
-app = Flask('ecommerceApp')
+app = Flask('ecommerceApp', static_url_path='')
 
 
 @app.route('/api/products')
