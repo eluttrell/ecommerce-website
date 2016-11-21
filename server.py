@@ -5,6 +5,10 @@ import bcrypt, uuid, pg, os
 db = pg.DB(dbname='ecommerce_db')
 app = Flask('ecommerceApp', static_url_path='')
 
+@app.route('/')
+def home():
+    return app.send_static_file('index.html')
+
 
 @app.route('/api/products')
 def products():
