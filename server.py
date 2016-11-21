@@ -23,7 +23,7 @@ def products():
 @app.route('/api/products/<prod_id>')
 def products_prod_id(prod_id):
     results = db.query(
-        'SELECT * FROM product WHERE product.id = $1', prod_id).dictresult()
+        'SELECT * FROM product, album_in_product WHERE album_in_product.product_id = $1 AND product.id = $1', prod_id).dictresult()
     return jsonify(results)
 
 
