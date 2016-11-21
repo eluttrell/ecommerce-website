@@ -1,9 +1,17 @@
 from flask import Flask, jsonify, request, redirect
-import bcrypt, uuid, pg, os
+import bcrypt
+import uuid
+import pg
+import os
 
 
 db = pg.DB(dbname='ecommerce_db')
-app = Flask('ecommerceApp')
+app = Flask('ecommerceApp', static_url_path='')
+
+
+@app.route('/')
+def home():
+    return app.send_static_file('index.html')
 
 
 @app.route('/api/products')
@@ -14,15 +22,16 @@ def products():
 
 @app.route('/api/products/<prod_id>')
 def products_prod_id(prod_id):
-    results = db.query('SELECT * FROM product WHERE product.id = $1', prod_id).dictresult()
+    results = db.query(
+        'SELECT * FROM product WHERE product.id = $1', prod_id).dictresult()
     return jsonify(results)
 
 
 @app.route('/api/user/signup', methods=['POST'])
 def signup():
     data = request.get_json()
-    password = data['password'] # the entered password
-    salt = bcrypt.gensalt() # generate a salt
+    password = data['password']  # the entered password
+    salt = bcrypt.gensalt()  # generate a salt
     # now generate the encrypted password
     encrypted_password = bcrypt.hashpw(password.encode('utf-8'), salt)
     return jsonify(db.insert('customer', {
@@ -38,8 +47,9 @@ def signup():
 def login():
     data = request.get_json()
     username = data['username']
-    password = data['password'] # the entered password
-    customer = db.query('SELECT * FROM customer WHERE customer.username = $1', username).namedresult()[0]
+    password = data['password']  # the entered password
+    customer = db.query(
+        'SELECT * FROM customer WHERE customer.username = $1', username).namedresult()[0]
     print "This is named result", db.query('SELECT * FROM customer WHERE customer.username = $1', username).namedresult()
     encrypted_password = customer.password
     customer_id = customer.id
@@ -69,15 +79,16 @@ def add_product_to_cart():
     data = request.get_json()
     sent_token = data.get('token')
     product_id = data.get('product_id')
-    customer = db.query('SELECT * FROM auth_token WHERE token = $1', sent_token).namedresult()
+    customer = db.query(
+        'SELECT * FROM auth_token WHERE token = $1', sent_token).namedresult()
     if customer == []:
         return "Forbidden", 403
     else:
         customer_id = customer[0].customer_id
         customer_token = customer[0].token
         db.insert('product_in_shopping_cart', {
-            'product_id' : product_id,
-            'customer_id' : customer_id
+            'product_id': product_id,
+            'customer_id': customer_id
         })
         return jsonify(customer)
 
@@ -86,7 +97,8 @@ def add_product_to_cart():
 def view_cart():
     sent_token = request.args.get('token')
     # customer_token = db.query('SELECT * FROM auth_token WHERE token = $1', sent_token).namedresult()[0].token
-    customer = db.query('SELECT * FROM auth_token WHERE token = $1', sent_token).namedresult()
+    customer = db.query(
+        'SELECT * FROM auth_token WHERE token = $1', sent_token).namedresult()
     if customer == []:
         return "Forbidden", 403
     else:
@@ -103,7 +115,8 @@ def view_cart():
 def checkout():
     data = request.get_json()
     sent_token = data.get('token')
-    customer = db.query('SELECT * FROM auth_token WHERE token = $1', sent_token).namedresult()
+    customer = db.query(
+        'SELECT * FROM auth_token WHERE token = $1', sent_token).namedresult()
     if customer == []:
         return "Forbidden", 403
     else:
