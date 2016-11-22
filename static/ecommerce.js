@@ -1,7 +1,10 @@
-var app = angular.module('ecommerce', ['ui.router']);
+var app = angular.module('ecommerce', ['ui.router', 'ngCookies']);
 
-app.factory('$productSearch', function($http) {
+app.factory('$productSearch', function($http, $cookies, $rootScope) {
     var service = {};
+
+    $rootScope.username = $cookies.getObject("user");
+    $rootScope.token = $cookies.getObject("token");
 
     service.productListCall = function() {
         var url = 'http://localhost:5000/api/products';
@@ -20,22 +23,26 @@ app.factory('$productSearch', function($http) {
     }
 
     service.signupPageCall = function(data) {
-      var url = 'http://localhost:5000/api/user/signup';
-      return $http({
-        method: 'POST',
-        url: url,
-        data: data
-      })
+        var url = 'http://localhost:5000/api/user/signup';
+        return $http({
+            method: 'POST',
+            url: url,
+            data: data
+        })
     }
 
-    // service.customerLoginCall = function(data) {
-    //   var url = 'http://localhost:5000/api/user/login';
-    //   return $http({
-    //     method: 'POST',
-    //     url: url,
-    //     data: data
-    //   })
-    // }
+    service.customerLoginCall = function(data) {
+        var url = 'http://localhost:5000/api/user/login';
+        return $http({
+            method: 'POST',
+            url: url,
+            data: data
+        }).success(function(loggedIn) {
+          $cookies.putObject('user', loggedIn.username);
+          $rootScope.username = loggedIn.username
+          $cookies.putObject('token', loggedIn.token);
+        })
+    }
 
     return service;
 });
@@ -46,43 +53,60 @@ app.controller('ProductListController', function($scope, $productSearch, $stateP
 
     $productSearch.productListCall().success(function(products) {
         $scope.products = products;
-        console.log(products);
     })
-
-    $scope.showDetails = function() {
-        $state.go('detailsPage', {
-            query: $stateParams.query
-        })
-    }
 })
 
 app.controller('DetailsPageController', function($scope, $productSearch, $stateParams, $state) {
-
     $productSearch.productDetailCall($stateParams.query).success(function(details) {
         $scope.packageDetails = details;
-        console.log($scope.packageDetails);
     })
 
 })
 
-app.controller('SignupController', function($scope, $productSearch, $stateParams, $state) {
-
+app.controller('SignupController', function($scope, $productSearch, $stateParams, $state, $cookies, $rootScope) {
     $scope.signupSubmit = function() {
-      var stuff = {username: $scope.username, email: $scope.email, first_name: $scope.first_name, last_name: $scope.last_name, password: $scope.password};
-      console.log(stuff);
-      $productSearch.signupPageCall(stuff).success(function(signedUp) {
-        $scope.success = signedUp;
-        console.log(signedUp);
-      })
+        // add first letter uppercase function
+        var data = {
+            username: $scope.username,
+            email: $scope.email,
+            first_name: $scope.first_name,
+            last_name: $scope.last_name,
+            password: $scope.password
+        };
+        var loginData = {
+            username: $scope.username,
+            password: $scope.password
+        };
+        if ($scope.password !== $scope.password_confirm) {
+            $scope.unmatchedPW = true;
+        } else {
+            $productSearch.signupPageCall(data).success(function(signedUp) {
+                $scope.success = signedUp;
+                $productSearch.customerLoginCall(loginData).success(function(loggedIn) {
+                    $scope.success = loggedIn;
+                    $state.go('home');
+                })
+            })
+        }
     }
 
 
 })
 
-app.controller('LoginController', function($scope, $productSearch, $stateParams, $state) {
-    // get the info
-
-    // $productSearch.customerLoginCall()
+app.controller('LoginController', function($scope, $productSearch, $stateParams, $state, $cookies, $rootScope) {
+    $scope.loginSubmit = function() {
+        var loginData = {
+            username: $scope.username,
+            password: $scope.password
+        };
+        $productSearch.customerLoginCall(loginData).error(function() {
+            $scope.failed = true;
+        })
+        $productSearch.customerLoginCall(loginData).success(function(loggedIn) {
+            $scope.success = loggedIn;
+            $state.go('home')
+        })
+    }
 })
 
 app.config(function($stateProvider, $urlRouterProvider) {
@@ -94,9 +118,9 @@ app.config(function($stateProvider, $urlRouterProvider) {
             controller: 'ProductListController'
         })
         .state({
-            name: 'detailsPage',
+            name: 'details_page',
             url: '/product/{query}',
-            templateUrl: 'deatails_page.html',
+            templateUrl: 'details_page.html',
             controller: 'DetailsPageController'
         })
         .state({
@@ -109,7 +133,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
             name: 'loginPage',
             url: '/login',
             templateUrl: 'login.html',
-            contorller: 'LoginController'
+            controller: 'LoginController'
         })
     $urlRouterProvider.otherwise('/');
 })

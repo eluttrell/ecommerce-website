@@ -9,15 +9,22 @@
     <script src="/angular.js" charset="utf-8"></script>
     <script src="/angular-ui-router.js" charset="utf-8"></script>
     <script src="/ecommerce.js" charset="utf-8"></script>
+    <script src="/angular-cookies.js" charset="utf-8"></script>
 </head>
 
 <body>
+  <br>
     <nav>
       <ul>
-        <a ui-sref='signupPage'><li>Sign Up</li></a>
-        <a ui-sref='loginPage'><li>Login</li></a>
+        <a ui-sref='home'>Home</a>
+        <span ng-hide="username">|</span>
+        <a ng-hide="username" ui-sref='signupPage'>Sign Up</a>
+        <span ng-hide="username">|</span>
+        <a ng-hide="username" ui-sref='loginPage'>Login</a>
+        <p ng-if="username" class="pull-right user-greet">Hello, {{username}} | <a>Logout</a></p>
       </ul>
     </nav>
+
     <ui-view></ui-view>
 </body>
 
