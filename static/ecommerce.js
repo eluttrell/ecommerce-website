@@ -1,6 +1,6 @@
 var app = angular.module('ecommerce', ['ui.router', 'ngCookies']);
 
-app.factory('$productSearch', function($http) {
+app.factory('$productSearch', function($http, $cookies, $rootScope) {
     var service = {};
 
     service.productListCall = function() {
@@ -34,6 +34,10 @@ app.factory('$productSearch', function($http) {
             method: 'POST',
             url: url,
             data: data
+        }).success(function(loggedIn) {
+          $cookies.putObject('user', loggedIn.username);
+          $rootScope.username = loggedIn.username
+          $cookies.putObject('token', loggedIn.token);
         })
     }
 
@@ -56,8 +60,9 @@ app.controller('DetailsPageController', function($scope, $productSearch, $stateP
 
 })
 
-app.controller('SignupController', function($scope, $productSearch, $stateParams, $state) {
+app.controller('SignupController', function($scope, $productSearch, $stateParams, $state, $cookies, $rootScope) {
     $scope.signupSubmit = function() {
+        // add first letter uppercase function
         var data = {
             username: $scope.username,
             email: $scope.email,
@@ -85,7 +90,7 @@ app.controller('SignupController', function($scope, $productSearch, $stateParams
 
 })
 
-app.controller('LoginController', function($scope, $productSearch, $stateParams, $state) {
+app.controller('LoginController', function($scope, $productSearch, $stateParams, $state, $cookies, $rootScope) {
     $scope.loginSubmit = function() {
         var loginData = {
             username: $scope.username,
