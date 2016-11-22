@@ -13,14 +13,15 @@
 </head>
 
 <body>
+  <br>
     <nav>
       <ul>
         <a ui-sref='home'>Home</a>
-        <span>|</span>
-        <a ui-sref='signupPage'>Sign Up</a>
-        <span>|</span>
-        <a ui-sref='loginPage'>Login</a>
-        <p class="pull-right user-greet">Hello, {{username}}</p>
+        <span ng-hide="username">|</span>
+        <a ng-hide="username" ui-sref='signupPage'>Sign Up</a>
+        <span ng-hide="username">|</span>
+        <a ng-hide="username" ui-sref='loginPage'>Login</a>
+        <p ng-if="username" class="pull-right user-greet">Hello, {{username}} | <a>Logout</a></p>
       </ul>
     </nav>
 

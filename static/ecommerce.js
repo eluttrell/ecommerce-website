@@ -3,6 +3,9 @@ var app = angular.module('ecommerce', ['ui.router', 'ngCookies']);
 app.factory('$productSearch', function($http, $cookies, $rootScope) {
     var service = {};
 
+    $rootScope.username = $cookies.getObject("user");
+    $rootScope.token = $cookies.getObject("token");
+
     service.productListCall = function() {
         var url = 'http://localhost:5000/api/products';
         return $http({
