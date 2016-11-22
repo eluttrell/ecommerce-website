@@ -2,7 +2,7 @@
   <div class="col-md-12 center-block">
     <div class="jumbotron">
       <ul>
-        <li ng-repeat="product in products"><h2>{{ product.name }} <a ui-sref='detailsPage({query: "{{product.id}}"})'><button class="btn btn-default" ng-click="showDetails()" type="button" name="button">View Info</button></a></h2><ul>
+        <li ng-repeat="product in products"><h2>{{ product.name }} <a ui-sref='details_page({query: product.id})'><button class="btn btn-default" ng-click="showDetails()" type="button" name="button">View Info</button></a></h2><ul>
           <li>${{ product.price }}.00</li>
           <li>{{ product.description }}</li>
         </ul></li>

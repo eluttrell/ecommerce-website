@@ -1,4 +1,22 @@
-<form ng-submit="" class="" action="index.html" method="post">
-  <input ng-model="" type="text" name="name" value="">
-  <input type="text" name="name" value="">
-</form>
+<div class="login">
+    <form ng-submit="loginSubmit()" method="post">
+        <label>Username <br>
+          <input ng-model="username" type="text" required autofocus="on">
+        </label>
+        <br>
+        <label>Password
+          <br>
+          <input ng-model="password" type="password" required>
+        </label>
+        <br>
+        <input type="submit" name="name" value="Login">
+        <br>
+        <p ng-if="success" class="alert alert-success">
+            You have succesfully logged in!
+        </p>
+        <p ng-if="failed" class="alert alert-warning">
+            Login info incorrect, please try again.
+        </p>
+    </form>
+
+</div>

@@ -64,12 +64,8 @@ def login():
             'token': token,
             'customer_id': customer_id
         })
-        user_data = db.query('''
-        SELECT customer.username AS "user", auth_token.token as "token"
-            FROM customer, auth_token
-            WHERE customer.username = $1 AND auth_token.customer_id = $2''', (username, customer_id)).dictresult()
-        print "this is dict result", user_data
-        return jsonify(user_data)
+        login_success = {"username": customer.username, "token": token}
+        return jsonify(login_success)
     else:
         return "Incorrect password", 401
 
