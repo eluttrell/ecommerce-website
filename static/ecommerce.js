@@ -1,10 +1,25 @@
 var app = angular.module('ecommerce', ['ui.router', 'ngCookies']);
 
-app.factory('$productSearch', function($http, $cookies, $rootScope) {
+app.factory('$productSearch', function($http, $cookies, $rootScope, $state) {
     var service = {};
 
     $rootScope.username = $cookies.getObject("user");
     $rootScope.token = $cookies.getObject("token");
+    $rootScope.logout = function() {
+      $cookies.remove("user");
+      $cookies.remove("token");
+      $rootScope.username = null;
+    }
+
+
+    $rootScope.viewCart = function() {
+        var data = {token: $rootScope.token};
+        console.log(data);
+        $productSearch.viewCartCall(data).success(function(cartContents) {
+        $scope.cartContents = cartContents;
+        console.log($scope.cartContents);
+        })
+    }
 
     service.productListCall = function() {
         var url = 'http://localhost:5000/api/products';
@@ -38,9 +53,27 @@ app.factory('$productSearch', function($http, $cookies, $rootScope) {
             url: url,
             data: data
         }).success(function(loggedIn) {
-          $cookies.putObject('user', loggedIn.username);
-          $rootScope.username = loggedIn.username
-          $cookies.putObject('token', loggedIn.token);
+            $cookies.putObject('user', loggedIn.username);
+            $rootScope.username = loggedIn.username;
+            $cookies.putObject('token', loggedIn.token);
+        })
+    }
+
+    service.addToCartCall = function(data) {
+        var url = 'http://localhost:5000/api/shopping_cart';
+        return $http({
+            method: 'POST',
+            url: url,
+            data: data
+        })
+    }
+
+    service.viewCartCall = function(data) {
+        var url = 'http://localhost:5000/api/shopping_cart';
+        return $http({
+            method: 'GET',
+            url: url,
+            params: data
         })
     }
 
@@ -49,7 +82,16 @@ app.factory('$productSearch', function($http, $cookies, $rootScope) {
 
 // controllers
 
-app.controller('ProductListController', function($scope, $productSearch, $stateParams, $state) {
+app.controller('ProductListController', function($scope, $productSearch, $stateParams, $state, $rootScope) {
+
+    $scope.addToCart = function(id) {
+        var data = {token: $rootScope.token, product_id: id};
+        $productSearch.addToCartCall(data).success(function(cart) {
+          $scope.shoppingCart = cart;
+          console.log($scope.shoppingCart);
+        })
+    }
+
 
     $productSearch.productListCall().success(function(products) {
         $scope.products = products;
@@ -104,7 +146,7 @@ app.controller('LoginController', function($scope, $productSearch, $stateParams,
         })
         $productSearch.customerLoginCall(loginData).success(function(loggedIn) {
             $scope.success = loggedIn;
-            $state.go('home')
+            $state.go('home');
         })
     }
 })

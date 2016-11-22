@@ -21,10 +21,13 @@
         <a ng-hide="username" ui-sref='signupPage'>Sign Up</a>
         <span ng-hide="username">|</span>
         <a ng-hide="username" ui-sref='loginPage'>Login</a>
-        <p ng-if="username" class="pull-right user-greet">Hello, {{username}} | <a>Logout</a></p>
+        <div ng-if="username" class="pull-right user-greet">
+
+          <p>Hello, {{username}} | <button type="button" ng-click="viewCart()">View Cart</button> | <button ng-click="logout()">Logout</a></button></p>
+        </div>
       </ul>
     </nav>
-
+    <hr>
     <ui-view></ui-view>
 </body>
 
