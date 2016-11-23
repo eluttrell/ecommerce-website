@@ -158,23 +158,47 @@ app.controller('viewCartController', function($scope, $rootScope, $productSearch
         token: $rootScope.token
     };
     $productSearch.viewCartCall(data).success(function(cartContents) {
-        $scope.cartContents = cartContents;
-        console.log($scope.cartContents);
+        $scope.cartContents = cartContents[0];
+        $scope.totalPrice = cartContents[1];
+        console.log(cartContents);
     })
-
-    $scope.checkout = function() {
-      $state.go('checkout');
-    }
 })
 
 app.controller('checkoutController', function($scope, $rootScope, $productSearch) {
     var data = {
       token: $rootScope.token
     };
-    $productSearch.checkoutCall(data).success(function(checkout) {
-      $scope.checkout = checkout;
-      console.log(checkout);
+    $productSearch.viewCartCall(data).success(function(cartContents) {
+        $scope.productInfo = cartContents[0];
+        $scope.priceInfo = cartContents[1];
+        console.log($scope.priceInfo);
+        console.log($scope.productInfo);
+        console.log(cartContents);
     })
+    $scope.checkout = function() {
+      var data = {
+        token: $rootScope.token,
+        shipping_address: [
+          $scope.fullname,
+          $scope.address1,
+          $scope.address2,
+          $scope.city,
+          $scope.state,
+          $scope.zip
+        ]
+      };
+      console.log('shipping_address:',
+        $scope.fullname,
+        $scope.address1,
+        $scope.address2,
+        $scope.city,
+        $scope.state,
+        $scope.zip
+      )
+      $productSearch.checkoutCall(data).success(function(checkout) {
+
+      })
+    }
 })
 
 app.config(function($stateProvider, $urlRouterProvider) {

@@ -98,19 +98,27 @@ def view_cart():
     if customer == []:
         return "Forbidden", 403
     else:
+        total_price = db.query("""
+        SELECT sum(price)
+            FROM product_in_shopping_cart
+            INNER JOIN product ON product.id = product_id
+            INNER JOIN auth_token ON auth_token.customer_id = product_in_shopping_cart.customer_id
+            WHERE auth_token.token = $1""", sent_token).namedresult()[0].sum
         results = db.query('''
         SELECT product.name as "product", product.price as "price"
             FROM product_in_shopping_cart
             INNER JOIN product ON product.id = product_id
             INNER JOIN auth_token ON auth_token.customer_id = product_in_shopping_cart.customer_id
             WHERE auth_token.token = $1''', sent_token).dictresult()
-        return jsonify(results)
+        return jsonify(results, total_price)
 
 
 @app.route('/api/shopping_cart/checkout', methods=['POST'])
 def checkout():
     data = request.get_json()
     sent_token = data.get('token')
+    address = data.get('shipping_address')
+    print address
     customer = db.query(
         'SELECT * FROM auth_token WHERE token = $1', sent_token).namedresult()
     if customer == []:
@@ -118,12 +126,12 @@ def checkout():
     else:
         customer_id = customer[0].customer_id
         customer_token = customer[0].token
-        # purchased_items = db.query("""
-        # SELECT price, product.name
-        #     FROM product_in_shopping_cart
-        #     INNER JOIN product ON product.id = product_id
-        #     INNER JOIN auth_token ON auth_token.customer_id = product_in_shopping_cart.customer_id
-        #     WHERE auth_token.token = '48cc7c65-e169-41fa-bada-885cb8c7cab3'""").dictresult()
+        purchased_items = db.query("""
+        SELECT price, product.name
+            FROM product_in_shopping_cart
+            INNER JOIN product ON product.id = product_id
+            INNER JOIN auth_token ON auth_token.customer_id = product_in_shopping_cart.customer_id
+            WHERE auth_token.token = $1""", customer_token).dictresult()
         total_price = db.query("""
         SELECT sum(price)
             FROM product_in_shopping_cart
@@ -132,10 +140,10 @@ def checkout():
             WHERE auth_token.token = $1""", customer_token).namedresult()[0].sum
         result = db.insert('purchase', {
             'customer_id': customer_id,
-            'total_price': total_price
+            'total_price': total_price,
+            'shipping_address': address
         })
-        return jsonify(result)
-
+        return jsonify(result, purchased_items)
 
 
 if __name__ == '__main__':

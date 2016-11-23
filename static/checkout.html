@@ -1,9 +1,37 @@
 <div class="container">
   <div class="jumbotron">
-    <h2>Pre-checkout:</h2>
+    <h2 class="center-text">Pre-checkout:</h2>
     <hr>
-    <p>Your current total is: ${{checkout.total_price}}.00</p>
+    <div class="row">
+      <div class="col-md-6 center-text">
+        <h3>Items in Cart:</h3>
+        <hr class="jumbo-rule">
+        <ul class="list-group">
+          <li ng-repeat="product in productInfo" class="list-group-item">{{ product.product }} - <span class="tag tag-default tag-pill float-xs-right">${{ product.price }}.00</span></li>
+        </ul>
+      </div>
+      <div class="col-md-6 center-text">
+        <h3>Shipping Address</h3>
+        <hr class="jumbo-rule">
+        <div class="form-group">
+          <form class="" method="post">
+            <input type="text" class="form-control" ng-model="fullname" placeholder="First Last">
+            <br>
+            <input type="text" class="form-control" ng-model="address1" placeholder="Address line 1">
+            <br>
+            <input type="text" class="form-control" ng-model="address2" placeholder="Address line 2">
+            <br>
+            <input type="text" class="form-control" ng-model="city" placeholder="ex. Atlanta">
+            <br>
+            <input type="text" class="form-control" ng-model="state" placeholder="ex. GA">
+            <br>
+            <input type="text" class="form-control" ng-model="zip" placeholder="Zip">
+          </form>
+        </div>
+      </div>
+    </div>
+    <h3 class="total-price">Your current total is: ${{priceInfo}}.00</h3>
     <hr>
-    <button type="button" class="btn btn-success">Final Checkout</button>
+    <button ng-click="checkout()" type="button" class="btn btn-success">Final Checkout</button>
   </div>
 </div>

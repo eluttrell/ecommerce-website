@@ -50,5 +50,9 @@ body {
 }
 
 .jumbo-rule {
-  border-color: #9d9d9d;
+  border-color: #d5d5d5;
+}
+
+.center-text {
+  text-align: center;
 }
