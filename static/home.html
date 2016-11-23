@@ -2,11 +2,15 @@
   <div class="col-md-12 center-block">
     <div class="jumbotron">
       <ul>
-        <li ng-repeat="product in products"><h2>{{ product.name }} <a ui-sref='details_page({query: product.id})'><button class="btn btn-default" ng-click="showDetails()" type="button" name="button">View Info</button></a></h2><ul>
-          <li>${{ product.price }}.00</li>
-          <li>{{ product.description }}</li>
-          <li><button type="button" ng-click="addToCart(product.id)">Add to Cart</button></li>
-        </ul></li>
+        <li ng-repeat="product in products"><h2>{{ product.name }}
+          <a ui-sref='details_page({query: product.id})'><button class="btn btn-default" ng-click="showDetails()" type="button" name="button">View Info</button></a></h2>
+          <hr class="jumbo-rule">
+          <ul>
+          <li class="products-line-height">${{ product.price }}.00</li>
+          <li class="products-line-height">{{ product.description }}</li>
+          <li><button class="btn btn-default" type="button" ng-click="addToCart(product.id)">Add to Cart</button></li>
+        </ul>
+      </li>
       </ul>
     </div>
   </div>
