@@ -6,19 +6,9 @@ app.factory('$productSearch', function($http, $cookies, $rootScope, $state) {
     $rootScope.username = $cookies.getObject("user");
     $rootScope.token = $cookies.getObject("token");
     $rootScope.logout = function() {
-      $cookies.remove("user");
-      $cookies.remove("token");
-      $rootScope.username = null;
-    }
-
-
-    $rootScope.viewCart = function() {
-        var data = {token: $rootScope.token};
-        console.log(data);
-        $productSearch.viewCartCall(data).success(function(cartContents) {
-        $scope.cartContents = cartContents;
-        console.log($scope.cartContents);
-        })
+        $cookies.remove("user");
+        $cookies.remove("token");
+        $rootScope.username = null;
     }
 
     service.productListCall = function() {
@@ -77,6 +67,15 @@ app.factory('$productSearch', function($http, $cookies, $rootScope, $state) {
         })
     }
 
+    service.checkoutCall = function(data) {
+      var url = 'http://localhost:5000/api/shopping_cart/checkout';
+      return $http({
+        method: 'POST',
+        url: url,
+        data: data
+      })
+    }
+
     return service;
 });
 
@@ -85,10 +84,13 @@ app.factory('$productSearch', function($http, $cookies, $rootScope, $state) {
 app.controller('ProductListController', function($scope, $productSearch, $stateParams, $state, $rootScope) {
 
     $scope.addToCart = function(id) {
-        var data = {token: $rootScope.token, product_id: id};
+        var data = {
+            token: $rootScope.token,
+            product_id: id
+        };
         $productSearch.addToCartCall(data).success(function(cart) {
-          $scope.shoppingCart = cart;
-          console.log($scope.shoppingCart);
+            $scope.shoppingCart = cart;
+            console.log($scope.shoppingCart);
         })
     }
 
@@ -151,6 +153,30 @@ app.controller('LoginController', function($scope, $productSearch, $stateParams,
     }
 })
 
+app.controller('viewCartController', function($scope, $rootScope, $productSearch, $state) {
+    var data = {
+        token: $rootScope.token
+    };
+    $productSearch.viewCartCall(data).success(function(cartContents) {
+        $scope.cartContents = cartContents;
+        console.log($scope.cartContents);
+    })
+
+    $scope.checkout = function() {
+      $state.go('checkout');
+    }
+})
+
+app.controller('checkoutController', function($scope, $rootScope, $productSearch) {
+    var data = {
+      token: $rootScope.token
+    };
+    $productSearch.checkoutCall(data).success(function(checkout) {
+      $scope.checkout = checkout;
+      console.log(checkout);
+    })
+})
+
 app.config(function($stateProvider, $urlRouterProvider) {
     $stateProvider
         .state({
@@ -176,6 +202,18 @@ app.config(function($stateProvider, $urlRouterProvider) {
             url: '/login',
             templateUrl: 'login.html',
             controller: 'LoginController'
+        })
+        .state({
+            name: 'viewCart',
+            url: '/view_cart',
+            templateUrl: 'viewCart.html',
+            controller: 'viewCartController'
+        })
+        .state({
+          name: 'checkout',
+          url: '/checkout',
+          templateUrl: 'checkout.html',
+          controller: 'checkoutController'
         })
     $urlRouterProvider.otherwise('/');
 })

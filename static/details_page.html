@@ -1,5 +1,12 @@
-<ul>
-  <li ng-repeat="package in packageDetails"><h2>{{ package.album_name }}</h2><ul>
-    <img ng-src="images/{{package.name}}/{{package.image_path}}" alt="{{package.album_name}}" width="300px"/>
-  </ul></li>
-</ul>
+<div class="container">
+    <div class="jumbotron">
+        <div class="details">
+            <ul class="details-ul">
+                <li class="details-list" ng-repeat="package in packageDetails">
+                    <h2>{{ package.album_name }}</h2>
+                    <img ng-src="images/{{package.name}}/{{package.image_path}}" alt="{{package.album_name}}" width="300px" />
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

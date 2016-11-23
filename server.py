@@ -99,11 +99,11 @@ def view_cart():
         return "Forbidden", 403
     else:
         results = db.query('''
-        SELECT product.name
+        SELECT product.name as "product", product.price as "price"
             FROM product_in_shopping_cart
             INNER JOIN product ON product.id = product_id
             INNER JOIN auth_token ON auth_token.customer_id = product_in_shopping_cart.customer_id
-            WHERE auth_token.token = $1''', sent_token).namedresult()
+            WHERE auth_token.token = $1''', sent_token).dictresult()
         return jsonify(results)
 
 
@@ -118,22 +118,24 @@ def checkout():
     else:
         customer_id = customer[0].customer_id
         customer_token = customer[0].token
-        purchased_items = db.query("""
-        SELECT price, product.name
-            FROM product_in_shopping_cart
-            INNER JOIN product ON product.id = product_id
-            INNER JOIN auth_token ON auth_token.customer_id = product_in_shopping_cart.customer_id
-            WHERE auth_token.token = '48cc7c65-e169-41fa-bada-885cb8c7cab3'""").dictresult()
+        # purchased_items = db.query("""
+        # SELECT price, product.name
+        #     FROM product_in_shopping_cart
+        #     INNER JOIN product ON product.id = product_id
+        #     INNER JOIN auth_token ON auth_token.customer_id = product_in_shopping_cart.customer_id
+        #     WHERE auth_token.token = '48cc7c65-e169-41fa-bada-885cb8c7cab3'""").dictresult()
         total_price = db.query("""
         SELECT sum(price)
             FROM product_in_shopping_cart
             INNER JOIN product ON product.id = product_id
             INNER JOIN auth_token ON auth_token.customer_id = product_in_shopping_cart.customer_id
             WHERE auth_token.token = $1""", customer_token).namedresult()[0].sum
-        return jsonify(db.insert('purchase', {
+        result = db.insert('purchase', {
             'customer_id': customer_id,
             'total_price': total_price
-        }))
+        })
+        return jsonify(result)
+
 
 
 if __name__ == '__main__':

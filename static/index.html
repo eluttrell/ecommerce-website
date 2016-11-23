@@ -16,14 +16,14 @@
   <br>
     <nav>
       <ul>
-        <a ui-sref='home'>Home</a>
+        <a ui-sref='home'><button type="button" class="btn btn-primary">Home</button></a>
         <span ng-hide="username">|</span>
-        <a ng-hide="username" ui-sref='signupPage'>Sign Up</a>
-        <span ng-hide="username">|</span>
-        <a ng-hide="username" ui-sref='loginPage'>Login</a>
+        <a ng-cloak ng-hide="username" ui-sref='signupPage'><button type="button" class="btn btn-link">Sign Up</button></a>
+        <span ng-cloak ng-hide="username">|</span>
+        <a ng-hide="username" ui-sref='loginPage'><button type="button" class="btn btn-link">Login</button></a>
         <div ng-if="username" class="pull-right user-greet">
 
-          <p>Hello, {{username}} | <button type="button" ng-click="viewCart()">View Cart</button> | <button ng-click="logout()">Logout</a></button></p>
+          <p><span class="greeting">Hello, {{username}}</span> | <button class="btn btn-primary" type="button" ui-sref="viewCart">View Cart</button> | <button class="btn btn-primary" ng-click="logout()">Logout</button></p>
         </div>
       </ul>
     </nav>
