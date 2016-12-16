@@ -1,0 +1,108 @@
+/*Global Utility Styling*/
+
+.image {
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    height: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
+    overflow: auto;
+}
+
+
+/*Global Tag Styling*/
+
+html {
+    height: 100%;
+    font-size: 100%;
+}
+
+body {
+    height: 100%;
+}
+
+nav {
+    float: left;
+    position: fixed;
+    height: 56px;
+    width: 100%;
+    opacity: 0.5;
+    background: black;
+    color: white;
+    font-size: 2rem;
+    font-family: "Aref Ruqaa", Serif;
+    font-style: italic;
+    z-index: 10;
+}
+
+.banner {
+    display: inline;
+    padding-left: 40px;
+}
+
+.chinese {
+    font-family: cursive;
+    padding-right: 20px;
+}
+
+nav ul {
+    display: inline;
+    text-align: center;
+    float: right;
+    padding-right: 20px;
+    margin-top: 11px;
+}
+
+nav ul li {
+    text-align: center;
+    display: inline-block;
+    padding: 0 50px;
+    line-height: 2rem;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: white;
+}
+
+nav ul li a:hover {
+    color: white !important;
+    cursor: pointer;
+}
+
+
+/*Page Specific*/
+
+.home-pic {
+    background-image: url(../images/home.jpeg);
+}
+
+.teachart {
+    background-image: url(../images/teachart.jpeg);
+}
+
+.product {
+    background-image: url(../images/product.jpeg);
+}
+
+.product-display {
+    background-image: url(../images/product-display.jpeg);
+}
+
+.login {
+    background-image: url(../images/login.jpeg);
+}
+
+.home {
+    margin-top: 56px;
+    color: white;
+}
+
+.home-info {
+  padding: 30px;
+}
+
+/*Media Queries*/

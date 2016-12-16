@@ -8,6 +8,8 @@ import os
 db = pg.DB(dbname='ecommerce_db')
 app = Flask('ecommerceApp', static_url_path='')
 
+stripe_api_key = 'sk_test_2f3Kpy0pky5uFJ5ZIQBYoWaY'
+
 
 @app.route('/')
 def home():
@@ -56,7 +58,6 @@ def login():
     # the following line will take the original salt that was used
     # in the generation of the encrypted password, which is stored as
     # part of the encrypted_password, and hash it with the entered password
-    # (compare lines 25 and 43)
     rehash = bcrypt.hashpw(password.encode('utf-8'), encrypted_password)
     if rehash == encrypted_password:
         token = uuid.uuid4()
@@ -118,7 +119,6 @@ def checkout():
     data = request.get_json()
     sent_token = data.get('token')
     address = data.get('shipping_address')
-    print address
     customer = db.query(
         'SELECT * FROM auth_token WHERE token = $1', sent_token).namedresult()
     if customer == []:

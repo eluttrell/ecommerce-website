@@ -68,12 +68,12 @@ app.factory('$productSearch', function($http, $cookies, $rootScope, $state) {
     }
 
     service.checkoutCall = function(data) {
-      var url = 'http://localhost:5000/api/shopping_cart/checkout';
-      return $http({
-        method: 'POST',
-        url: url,
-        data: data
-      })
+        var url = 'http://localhost:5000/api/shopping_cart/checkout';
+        return $http({
+            method: 'POST',
+            url: url,
+            data: data
+        })
     }
 
     return service;
@@ -153,20 +153,9 @@ app.controller('LoginController', function($scope, $productSearch, $stateParams,
     }
 })
 
-app.controller('viewCartController', function($scope, $rootScope, $productSearch, $state) {
-    var data = {
-        token: $rootScope.token
-    };
-    $productSearch.viewCartCall(data).success(function(cartContents) {
-        $scope.cartContents = cartContents[0];
-        $scope.totalPrice = cartContents[1];
-        console.log(cartContents);
-    })
-})
-
 app.controller('checkoutController', function($scope, $rootScope, $productSearch) {
     var data = {
-      token: $rootScope.token
+        token: $rootScope.token
     };
     $productSearch.viewCartCall(data).success(function(cartContents) {
         $scope.productInfo = cartContents[0];
@@ -176,28 +165,33 @@ app.controller('checkoutController', function($scope, $rootScope, $productSearch
         console.log(cartContents);
     })
     $scope.checkout = function() {
-      var data = {
-        token: $rootScope.token,
-        shipping_address: [
-          $scope.fullname,
-          $scope.address1,
-          $scope.address2,
-          $scope.city,
-          $scope.state,
-          $scope.zip
-        ]
-      };
-      console.log('shipping_address:',
-        $scope.fullname,
-        $scope.address1,
-        $scope.address2,
-        $scope.city,
-        $scope.state,
-        $scope.zip
-      )
-      $productSearch.checkoutCall(data).success(function(checkout) {
-
-      })
+        var data = {
+            token: $rootScope.token,
+            shipping_address: [
+                $scope.fullname,
+                $scope.address1,
+                $scope.address2,
+                $scope.city,
+                $scope.state,
+                $scope.zip
+            ]
+        };
+        $productSearch.checkoutCall(data).success(function(checkout) {
+            var handler = StripeCheckout.configure({
+                key: 'pk_test_sPjB8bsEsSoFSZkrKgq2lz5I',
+                locale: 'atuo',
+                token: function callback(token) {
+                    var stripeToken = token.id;
+                }
+            })
+            var amount = $scope.priceInfo;
+            console.log(amount);
+            handler.open({
+                name: "NOW that's what I call music rentals!",
+                description: 'Some music',
+                amount: amount * 100
+            });
+        })
     }
 })
 
@@ -206,38 +200,45 @@ app.config(function($stateProvider, $urlRouterProvider) {
         .state({
             name: 'home',
             url: '/',
-            templateUrl: 'home.html',
+            templateUrl: 'templates/home.html',
             controller: 'ProductListController'
         })
         .state({
-            name: 'details_page',
-            url: '/product/{query}',
-            templateUrl: 'details_page.html',
-            controller: 'DetailsPageController'
+            name: 'teaChart',
+            url: '/teaChart',
+            templateUrl: 'templates/tea-chart.html',
+            controller: 'TeaChartController'
         })
         .state({
-            name: 'signupPage',
-            url: '/signupPage',
-            templateUrl: 'signup_page.html',
-            controller: 'SignupController'
-        })
-        .state({
-            name: 'loginPage',
+            name: 'products',
             url: '/login',
-            templateUrl: 'login.html',
+            templateUrl: 'templates/login.html',
             controller: 'LoginController'
         })
         .state({
-            name: 'viewCart',
-            url: '/view_cart',
-            templateUrl: 'viewCart.html',
-            controller: 'viewCartController'
+            name: 'productsDisplay',
+            url: '/login',
+            templateUrl: 'templates/login.html',
+            controller: 'LoginController'
         })
         .state({
-          name: 'checkout',
-          url: '/checkout',
-          templateUrl: 'checkout.html',
-          controller: 'checkoutController'
+            name: 'login',
+            url: '/login',
+            templateUrl: 'templates/login.html',
+            controller: 'LoginController'
         })
+        .state({
+            name: 'signup',
+            url: '/signupPage',
+            templateUrl: 'templates/signup_page.html',
+            controller: 'SignupController'
+        })
+        .state({
+            name: 'checkout',
+            url: '/checkout',
+            templateUrl: 'templates/checkout.html',
+            controller: 'checkoutController'
+        })
+
     $urlRouterProvider.otherwise('/');
 })
