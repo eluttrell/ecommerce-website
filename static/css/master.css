@@ -73,6 +73,10 @@ nav ul li a:hover {
     cursor: pointer;
 }
 
+.teachart-link {
+    word-spacing: 6px;
+}
+
 
 /*Page Specific*/
 
@@ -85,7 +89,7 @@ nav ul li a:hover {
 }
 
 .product {
-    background-image: url(../images/product.jpeg);
+    background-image: url(../images/products.jpg);
 }
 
 .product-display {
@@ -93,7 +97,7 @@ nav ul li a:hover {
 }
 
 .login {
-    background-image: url(../images/login.jpeg);
+    background-image: url(../images/login.jpg);
 }
 
 .home {
